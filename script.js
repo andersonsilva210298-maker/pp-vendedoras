@@ -7,6 +7,7 @@
 const CONFIG = {
   loja: {
     titulo: "",
+    telefoneNotificacoes: "558298359911",
     subtitulo: "O melhor atendimento, você só encontra aqui!",
     textoHero:
       "É o lugar onde a criatividade ganha vida, os sonhos ganham cores e cada presente se transforma em uma demonstração de carinho. 🎁",
@@ -104,6 +105,7 @@ const CONFIG = {
   // Reorganiza a ordem dos vendedores automaticamente a cada 5 dias.
   // A ordem é igual para todos os visitantes durante cada período de 5 dias.
   intervaloOrdenacaoVendedoresDias: 5,
+  intervaloZerarRankingDias: 30,
 };
 
 /* Não é necessário editar abaixo desta linha para personalizações comuns. */
@@ -240,19 +242,106 @@ function renderCarousel() {
     );
 }
 
+
+function calcularPontos(nota) {
+  const tabela = {
+    1: 1,
+    2: 5,
+    3: 6,
+    4: 8,
+    5: 10
+  };
+
+  return tabela[nota] || 0;
+}
+
+function obterAvaliacoes() {
+  return JSON.parse(
+    localStorage.getItem("papelPautadoAvaliacoes") || "[]"
+  );
+}
+
+function calcularRanking() {
+  const avaliacoes = obterAvaliacoes();
+
+  return CONFIG.vendedores.map(vendedor => {
+    const avaliacoesVendedor = avaliacoes.filter(
+      avaliacao => avaliacao.vendedorId === vendedor.id
+    );
+
+    const pontos = avaliacoesVendedor.reduce(
+      (total, avaliacao) => total + calcularPontos(avaliacao.nota),
+      0
+    );
+
+    return {
+      ...vendedor,
+      pontos,
+      quantidadeAvaliacoes: avaliacoesVendedor.length
+    };
+  }).sort((a, b) => b.pontos - a.pontos);
+}
+
 function renderRanking() {
-  $("#ranking-list").innerHTML = CONFIG.ranking
-    .map(
-      (r, i) => `
-    <li class="rank-row">
-      <span class="rank-number">${i + 1}</span>
-      <span class="rank-name">${escapeHtml(r.nome)}</span>
-      <img class="rank-photo" src="${escapeHtml(r.foto)}" alt="" onerror="this.style.visibility='hidden'">
-      <strong class="rank-value">${escapeHtml(r.resultado)}</strong>
-    </li>`,
-    )
+  const ranking = calcularRanking();
+
+  $("#ranking-list").innerHTML = ranking
+    .map((vendedor, i) => `
+      <li class="rank-row">
+        <span class="rank-number">${i + 1}</span>
+
+        <span class="rank-name">
+          ${escapeHtml(vendedor.nome)}
+        </span>
+
+        <img
+          class="rank-photo"
+          src="${escapeHtml(vendedor.foto)}"
+          alt=""
+          onerror="this.style.visibility='hidden'"
+        >
+
+        <strong class="rank-value">
+          ${vendedor.pontos} pontos
+        </strong>
+      </li>
+    `)
     .join("");
 }
+
+
+function verificarZeragemAutomatica() {
+  const CHAVE = "papelPautadoUltimaZeragem";
+
+  const intervaloDias = CONFIG.intervaloZerarRankingDias || 30;
+  const intervaloMs = intervaloDias * 24 * 60 * 60 * 1000;
+
+  const agora = Date.now();
+
+  let ultimaZeragem = Number(localStorage.getItem(CHAVE));
+
+  // Primeira execução: inicia a contagem de 30 dias.
+  if (!ultimaZeragem) {
+    localStorage.setItem(CHAVE, String(agora));
+    return;
+  }
+
+  // Verifica se os 30 dias foram completados.
+  if (agora - ultimaZeragem >= intervaloMs) {
+
+    // Apaga todas as avaliações e pontos acumulados.
+    localStorage.removeItem("papelPautadoAvaliacoes");
+
+    // Inicia um novo ciclo de 30 dias.
+    localStorage.setItem(CHAVE, String(agora));
+
+    // Atualiza o ranking.
+    renderRanking();
+
+    console.log("Ranking zerado automaticamente!");
+  }
+}
+
 
 function iniciarAtendimento(id) {
   const vendedor = CONFIG.vendedores.find((v) => v.id === id);
@@ -288,46 +377,152 @@ function mostrarAvaliacao() {
   return true;
 }
 
+
 function configurarNota(vendedor) {
   let nota = 0;
+
+  // Campos para identificar o cliente.
+  const camposCliente = document.createElement("div");
+
+  camposCliente.id = "dados-cliente-avaliacao";
+
+  camposCliente.innerHTML = `
+    <div class="campo-avaliacao">
+      <label for="cliente-nome">Seu nome:</label>
+      <input
+        type="text"
+        id="cliente-nome"
+        placeholder="Digite seu nome completo"
+        required
+      >
+    </div>
+
+    <div class="campo-avaliacao">
+      <label for="cliente-telefone">Seu telefone / WhatsApp:</label>
+      <input
+        type="tel"
+        id="cliente-telefone"
+        placeholder="Ex.: (82) 99999-9999"
+        required
+      >
+    </div>
+
+    <p style="font-size:12px;color:#777">
+      Seus dados serão utilizados para identificar sua avaliação.
+    </p>
+  `;
+
+  // Insere os campos antes da mensagem de feedback.
+  $("#rating-feedback").before(camposCliente);
+
+
   const feedback = [
     "",
     "Sentimos muito. Vamos buscar melhorar.",
     "Obrigado. Vamos trabalhar para melhorar.",
     "Obrigado pela avaliação!",
     "Que bom! Ficamos felizes.",
-    "Uau! Muito obrigado pela avaliação!",
+    "Uau! Muito obrigado pela avaliação!"
   ];
-  document.querySelectorAll(".star-option").forEach((btn) =>
+
+  document.querySelectorAll(".star-option").forEach(btn => {
     btn.addEventListener("click", () => {
       nota = Number(btn.dataset.score);
-      document
-        .querySelectorAll(".star-option")
-        .forEach((b) =>
-          b.classList.toggle("selected", Number(b.dataset.score) <= nota),
+
+      document.querySelectorAll(".star-option").forEach(b => {
+        b.classList.toggle(
+          "selected",
+          Number(b.dataset.score) <= nota
         );
+      });
+
       $("#rating-feedback").textContent = feedback[nota];
+
       $("#enviar-avaliacao").disabled = false;
-    }),
-  );
+    });
+  });
+
   $("#enviar-avaliacao").addEventListener("click", () => {
-    if (!nota) return;
-    // Protótipo: grava avaliação apenas neste navegador. Para consolidar entre clientes, conecte um backend.
-    const ratings = JSON.parse(
-      localStorage.getItem("papelPautadoAvaliacoes") || "[]",
-    );
-    ratings.push({
+    if (!nota) {
+      alert("Por favor, selecione as estrelas da avaliação.");
+      return;
+    }
+
+    const nomeCliente = $("#cliente-nome").value.trim();
+    const telefoneCliente = $("#cliente-telefone").value.trim();
+    const telefoneLimpo = telefoneCliente.replace(/\D/g, "");
+
+    if (nomeCliente.length < 2) {
+      alert("Por favor, informe seu nome.");
+      $("#cliente-nome").focus();
+      return;
+    }
+
+    if (telefoneLimpo.length < 10 || telefoneLimpo.length > 13) {
+      alert("Informe um telefone válido com DDD.");
+      $("#cliente-telefone").focus();
+      return;
+    }
+
+    const telefoneLoja =
+      CONFIG.loja.telefoneNotificacoes.replace(/\D/g, "");
+
+    if (!telefoneLoja || telefoneLoja.length < 12) {
+      alert("O telefone de notificações da loja não está configurado.");
+      return;
+    }
+
+    const ratings = obterAvaliacoes();
+    const pontos = calcularPontos(nota);
+
+    // Registra todos os dados da avaliação.
+    const avaliacao = {
+      cliente: nomeCliente,
+      telefoneCliente: telefoneLimpo,
       vendedorId: vendedor.id,
       vendedor: vendedor.nome,
-      nota,
-      data: new Date().toISOString(),
-    });
-    localStorage.setItem("papelPautadoAvaliacoes", JSON.stringify(ratings));
+      nota: nota,
+      pontos: pontos,
+      data: new Date().toISOString()
+    };
+
+    ratings.push(avaliacao);
+
+    localStorage.setItem(
+      "papelPautadoAvaliacoes",
+      JSON.stringify(ratings)
+    );
+
+    // Atualiza o ranking.
+    renderRanking();
+
+    // Monta a mensagem para a loja.
+    const estrelas = "⭐".repeat(nota);
+
+    const mensagemLoja =
+      `🔔 NOVA AVALIAÇÃO - PAPEL PAUTADO\n\n` +
+      `👤 Cliente: ${nomeCliente}\n` +
+      `📱 Telefone: ${telefoneCliente}\n` +
+      `🛍️ Vendedora: ${vendedor.nome}\n` +
+      `⭐ Avaliação: ${estrelas} (${nota} estrelas)\n` +
+      `🏆 Pontos gerados: ${pontos} pontos\n` +
+      `📅 Data: ${new Date().toLocaleString("pt-BR")}`;
+
+    // Abre o WhatsApp da loja com a mensagem preenchida.
+    const urlWhatsApp =
+      `https://wa.me/${telefoneLoja}?text=${encodeURIComponent(mensagemLoja)}`;
+
+    window.open(urlWhatsApp, "_blank");
+
     $("#rating-feedback").textContent =
-      "Obrigado! Sua avaliação foi registrada neste dispositivo.";
+      `Obrigado, ${nomeCliente}! Sua avaliação foi registrada e ${pontos} pontos foram atribuídos a ${vendedor.nome}.`;
+
     $("#enviar-avaliacao").disabled = true;
   });
+
 }
+
+ 
 
 function contarVisita() {
   // Contador local do navegador. Contagem global exige um serviço/backend compartilhado.
@@ -337,11 +532,19 @@ function contarVisita() {
   $("#contador-visitas").textContent = total;
 }
 
+
 renderTexts();
+
 if (!mostrarAvaliacao()) {
   contarVisita();
   renderSellers();
   programarProximaTrocaDeOrdem();
   renderCarousel();
+
+  // Verifica se chegou o momento de zerar o ranking.
+  verificarZeragemAutomatica();
+
+  // Mostra o ranking atualizado.
   renderRanking();
 }
+

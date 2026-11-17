@@ -26,6 +26,41 @@ a {
 a {
   color: inherit;
 }
+
+
+#dados-cliente-avaliacao {
+  width: 100%;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.campo-avaliacao {
+  margin-bottom: 15px;
+}
+
+.campo-avaliacao label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: bold;
+  color: #64217f;
+}
+
+.campo-avaliacao input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.campo-avaliacao input:focus {
+  border-color: #64217f;
+  box-shadow: 0 0 5px rgba(100, 33, 127, 0.2);
+}
+
+
 .container {
   width: min(100% - 42px, var(--largura));
   margin-inline: auto;

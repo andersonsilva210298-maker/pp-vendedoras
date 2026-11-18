@@ -84,25 +84,19 @@ a {
   position: relative;
 }
 .logo {
-   display: block;
-   width: 300px;
-   margin-left: -120px;
-   margin-bottom: 10px;
+  display: block;
   text-decoration: none;
   font-size: clamp(42px, 7vw, 76px);
   font-weight: 900;
   line-height: 0.66;
   letter-spacing: -5px;
   text-align: left;
-  color: #0d0d0d;
+  color: #fff;
   transform: rotate(-2deg);
   text-shadow: 0 2px 0 rgba(255, 255, 255, 0.08);
 }
-.logo img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+.logo span {
+  padding-left: 38px;
 }
 .visitas {
   position: absolute;
@@ -255,7 +249,7 @@ a {
   opacity: 1;
 }
 .vendedores {
-  background: #025a00;
+  background: #036301;
   padding: 42px 0 38px;
 }
 .vendedores-intro {
@@ -522,7 +516,7 @@ a {
     min-height: 190px;
   }
 }
-@media (max-width: 60px) {
+@media (max-width: 600px) {
   .container {
     width: calc(100% - 34px);
   }

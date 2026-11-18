@@ -1,8 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap");
 :root {
-  --roxo: #8738e8;
+  -roxo: #e83838;
+  background-image: url(assets/natal\ fundo.jpg);
   --roxo-escuro: #64217f;
-  --azul: #21457f;
+  --azul: #ef0000;
   --branco: #fff;
   --texto: #fff;
   --largura: 1180px;
@@ -125,7 +126,8 @@ a {
   font-weight: 900;
 }
 .intro p {
-  font-size: 12px;
+  font-size: 25px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   margin: 0;
   opacity: 0.85;
 }
@@ -247,7 +249,7 @@ a {
   opacity: 1;
 }
 .vendedores {
-  background: #64217f;
+  background: #025a00;
   padding: 42px 0 38px;
 }
 .vendedores-intro {
@@ -381,8 +383,9 @@ a {
   white-space: nowrap;
 }
 .rodape {
+  background-image: url(assets/natal\ fundo.jpg);
   height: 70px;
-  background: #64217f;
+  background: 0;
 }
 .hidden {
   display: none !important;

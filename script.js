@@ -8,7 +8,7 @@ const CONFIG = {
   loja: {
     titulo: "",
     telefoneNotificacoes: "558298359911",
-    subtitulo: "O melhor atendimento, você só encontra aqui!",
+    subtitulo: "O Natal já chegou por aqui!",
     textoHero:
       "É o lugar onde a criatividade ganha vida, os sonhos ganham cores e cada presente se transforma em uma demonstração de carinho. 🎁",
     textoDestaques:
@@ -28,7 +28,7 @@ const CONFIG = {
       id: "barbara",
       nome: "Bárbara",
       telefone: "558298359911",
-      foto: "assets/barbara 2.png",
+      foto: "assets/barbara.jpeg",
     },
     {
       id: "claudia",
@@ -75,7 +75,7 @@ const CONFIG = {
     {
       nome: "Bárbara",
       resultado: "0%",
-      foto: "assets/barbara 2.png",
+      foto: "assets/barbara.jpeg",
     },
     {
       nome: "Roberta",

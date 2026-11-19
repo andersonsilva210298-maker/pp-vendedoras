@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap");
 :root {
-  -roxo: #e83838;
-  background-image: url(assets/natal\ fundo.jpg);
+  --roxo: #e83838;
+  
   --roxo-escuro: #64217f;
   --azul: #ef0000;
   --branco: #fff;
@@ -19,6 +19,7 @@ body {
   font-family: "Nunito Sans", Arial, sans-serif;
   background: var(--roxo);
   color: var(--texto);
+
 }
 button,
 a {
@@ -85,34 +86,40 @@ a {
 }
 .logo {
   display: block;
+  width: clamp(220px, 42vw, 430px);
+  line-height: 0;
   text-decoration: none;
-  font-size: clamp(42px, 7vw, 76px);
-  font-weight: 900;
-  line-height: 0.66;
-  letter-spacing: -5px;
-  text-align: left;
-  color: #fff;
-  transform: rotate(-2deg);
-  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.08);
+  transform: none;
 }
-.logo span {
-  padding-left: 38px;
+
+.logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 .visitas {
-  position: absolute;
-  right: 0;
+  position: absolute !important;
+  width: 45px !important;
+  height: 45px !important;
+  min-width: 45px !important;
+  min-height: 45px !important;
+  max-width: 45px !important;
+  max-height: 45px !important;
+  right: 5px;
   top: 28px;
-  width: 76px;
-  height: 76px;
   border-radius: 50%;
   background: #b58be6;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  line-height: 1.05;
-  font-size: 14px;
+  line-height: 1;
+  font-size: 9px !important;
+  padding: 0 !important;
+  box-sizing: border-box;
 }
+
 .visitas strong {
   font-size: 19px;
 }
@@ -126,7 +133,7 @@ a {
   font-weight: 900;
 }
 .intro p {
-  font-size: 25px;
+  font-size: 18px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   margin: 0;
   opacity: 0.85;
@@ -387,6 +394,7 @@ a {
   height: 70px;
   background: 0;
 }
+
 .hidden {
   display: none !important;
 }
@@ -401,9 +409,11 @@ a {
   text-align: center;
 }
 .logo-rating {
-  width: max-content;
+  display: block;
+  width: clamp(240px, 70vw, 480px);
+  height: auto;
   margin: 0 auto 85px;
-  font-size: clamp(48px, 9vw, 72px);
+  object-fit: contain;
 }
 .rating-content > h1 {
   font-size: clamp(25px, 5vw, 42px);
@@ -524,7 +534,7 @@ a {
     height: 145px;
   }
   .logo {
-    font-size: 48px;
+    width: min(68vw, 310px);
   }
   .visitas {
     width: 66px;
@@ -640,6 +650,7 @@ a {
     padding: 48px 20px 55px;
   }
   .logo-rating {
+    width: min(78vw, 360px);
     margin-bottom: 78px;
   }
   .rating-content > h1 {

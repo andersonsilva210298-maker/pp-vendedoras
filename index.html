@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#8738e8">
-  <title>Papel Pautado | Atendimento</title>
+  <title>Papel Pautado</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main id="pagina-inicial" class="page">
     <header class="topo container">
-      <a class="logo" href="#" aria-label="Papel Pautado - início">papel<br><span>pautado</span></a>
+      <a class="logo" href="#" aria-label="Papel Pautado - início"><img src="assets/logo pp.png" alt="Papel Pautado"></a>
       <div class="visitas" aria-label="Visitas nesta página">
         <strong id="contador-visitas">0</strong><span>Visitas</span>
       </div>
@@ -62,7 +62,7 @@
 
   <main id="pagina-avaliacao" class="rating-page hidden">
     <div class="rating-content">
-      <a class="logo logo-rating" href="./" aria-label="Papel Pautado - voltar ao início">papel<br><span>pautado</span></a>
+      <a class="logo logo-rating" href="./" aria-label="Papel Pautado - voltar ao início"><img src="assets/logo-pp.png" alt="Papel Pautado"></a>
       <h1 id="titulo-avaliacao">Avalie o atendimento de</h1>
       <img id="foto-vendedor-avaliacao" class="rating-avatar" src="" alt="Foto do vendedor">
       <h2 id="nome-vendedor-avaliacao" class="rating-name">Vendedor</h2>
@@ -81,6 +81,8 @@
       <a class="voltar" href="./">← Voltar para a página inicial</a>
     </div>
   </main>
-  <script src="script.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
 </body>
 </html>

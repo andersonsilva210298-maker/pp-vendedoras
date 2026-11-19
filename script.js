@@ -1,7 +1,5 @@
 /* ==========================================================
-   PAPEL PAUTADO — PERSONALIZE O SITE NESTA ÁREA
-   Troque nomes, telefones, fotos, mensagens, textos e ranking.
-   Telefones no formato internacional: 55 + DDD + número.
+   PAPEL PAUTADO — CONFIGURAÇÕES
    ========================================================== */
 
 const CONFIG = {
@@ -22,7 +20,6 @@ const CONFIG = {
       "Olá, {vendedor}! Gostei muito de um dos seus produtos, poderia me ajudar?.🥰🥰",
   },
 
-  // Cadastre até quantos vendedores desejar. Foto: caminho relativo dentro do projeto.
   vendedores: [
     {
       id: "barbara",
@@ -56,7 +53,6 @@ const CONFIG = {
     },
   ],
 
-  // Dez espaços do carrossel. Substitua os caminhos pelas suas imagens.
   destaques: [
     "assets/caixas brancas.jpg",
     "assets/laços.jpg",
@@ -70,7 +66,6 @@ const CONFIG = {
     "assets/corujas.jpg",
   ],
 
-  // Edite livremente os nomes, fotos e resultados do ranking.
   ranking: [
     {
       nome: "Bárbara",
@@ -99,94 +94,203 @@ const CONFIG = {
     },
   ],
 
-  // Intervalo de troca automática do carrossel, em milissegundos.
   intervaloCarrossel: 3500,
-
-  // Reorganiza a ordem dos vendedores automaticamente a cada 5 dias.
-  // A ordem é igual para todos os visitantes durante cada período de 5 dias.
   intervaloOrdenacaoVendedoresDias: 5,
   intervaloZerarRankingDias: 30,
 };
 
-/* Não é necessário editar abaixo desta linha para personalizações comuns. */
-const $ = (s) => document.querySelector(s);
-const escapeHtml = (s) =>
-  String(s).replace(
+/* ==========================================================
+   CONEXÃO COM O SUPABASE
+   ========================================================== */
+
+// ATENÇÃO: substitua os dois valores pelos dados reais
+// do seu projeto Supabase.
+// Use a chave pública anon/publishable. Nunca use service_role.
+
+const SUPABASE_URL = "https://ezufhogcaracmyauznny.supabase.co";
+const SUPABASE_CHAVE_PUBLICA = "sb_publishable_sVTnnICXfoRt9ES5xLmamQ_FpCPATCJ";
+
+let supabaseClient = null;
+
+try {
+  if (
+    window.supabase &&
+    SUPABASE_URL.startsWith("https://") &&
+    SUPABASE_CHAVE_PUBLICA !== "SUA_CHAVE_PUBLICA_REAL" &&
+    SUPABASE_CHAVE_PUBLICA.length > 20
+  ) {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_CHAVE_PUBLICA,
+    );
+  } else {
+    console.warn(
+      "Supabase ainda não configurado. O site continuará exibindo as vendedoras e o ranking zerado.",
+    );
+  }
+} catch (erro) {
+  console.error("Erro ao iniciar o Supabase:", erro);
+}
+
+/* ==========================================================
+   FUNÇÕES GERAIS
+   ========================================================== */
+
+const $ = (seletor) => document.querySelector(seletor);
+
+const escapeHtml = (valor) =>
+  String(valor).replace(
     /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        c
-      ],
+    (caractere) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[caractere],
   );
-const initials = (name) =>
-  name
+
+const initials = (nome) =>
+  nome
     .split(/\s+/)
-    .map((x) => x[0])
+    .map((parte) => parte[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
-const imageOrFallback = (src, name) => {
-  const safe = escapeHtml(src);
-  return `<img class="seller-photo" src="${safe}" alt="Foto de ${escapeHtml(name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="seller-photo avatar-fallback" style="display:none;place-items:center;color:#64217f;font-weight:900">${escapeHtml(initials(name))}</span>`;
+
+const imageOrFallback = (src, nome) => {
+  const seguro = escapeHtml(src);
+
+  return `
+    <img
+      class="seller-photo"
+      src="${seguro}"
+      alt="Foto de ${escapeHtml(nome)}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+    >
+    <span
+      class="seller-photo avatar-fallback"
+      style="display:none;place-items:center;color:#64217f;font-weight:900"
+    >
+      ${escapeHtml(initials(nome))}
+    </span>
+  `;
 };
 
+/* ==========================================================
+   TEXTOS DO SITE
+   ========================================================== */
+
 function renderTexts() {
-  $("#titulo-loja").textContent = CONFIG.loja.titulo;
-  $("#subtitulo-loja").textContent = CONFIG.loja.subtitulo;
-  $("#texto-hero").textContent = CONFIG.loja.textoHero;
-  $("#texto-destaques").textContent = CONFIG.loja.textoDestaques;
-  $("#texto-vendedores").textContent = CONFIG.loja.textoVendedores;
-  $("#titulo-ranking").innerHTML = CONFIG.loja.tituloRanking
-    .split("|")
-    .map(escapeHtml)
-    .join("<br>");
-  $("#pergunta-avaliacao").textContent = CONFIG.loja.perguntaAvaliacao;
+  if ($("#titulo-loja")) {
+    $("#titulo-loja").textContent = CONFIG.loja.titulo;
+  }
+
+  if ($("#subtitulo-loja")) {
+    $("#subtitulo-loja").textContent = CONFIG.loja.subtitulo;
+  }
+
+  if ($("#texto-hero")) {
+    $("#texto-hero").textContent = CONFIG.loja.textoHero;
+  }
+
+  if ($("#texto-destaques")) {
+    $("#texto-destaques").textContent = CONFIG.loja.textoDestaques;
+  }
+
+  if ($("#texto-vendedores")) {
+    $("#texto-vendedores").textContent = CONFIG.loja.textoVendedores;
+  }
+
+  if ($("#titulo-ranking")) {
+    $("#titulo-ranking").innerHTML = CONFIG.loja.tituloRanking
+      .split("|")
+      .map(escapeHtml)
+      .join("<br>");
+  }
+
+  if ($("#pergunta-avaliacao")) {
+    $("#pergunta-avaliacao").textContent = CONFIG.loja.perguntaAvaliacao;
+  }
 }
+
+/* ==========================================================
+   ORDEM AUTOMÁTICA DAS VENDEDORAS
+   ========================================================== */
 
 function vendedoresEmOrdemDoPeriodo() {
   const vendedores = [...CONFIG.vendedores];
+
   const dias = Math.max(
     1,
     Number(CONFIG.intervaloOrdenacaoVendedoresDias) || 5,
   );
+
   const periodoMs = dias * 24 * 60 * 60 * 1000;
-  // Período calculado em UTC: todos veem a mesma ordem e ela muda a cada N dias.
   const periodoAtual = Math.floor(Date.now() / periodoMs);
+
   let seed = periodoAtual + 0x9e3779b9;
+
   const random = () => {
     seed |= 0;
     seed = (seed + 0x6d2b79f5) | 0;
+
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
-  // Fisher-Yates com semente baseada no período de 5 dias.
+
   for (let i = vendedores.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
     [vendedores[i], vendedores[j]] = [vendedores[j], vendedores[i]];
   }
+
   return vendedores;
 }
 
 function renderSellers() {
+  const grade = $("#seller-grid");
+
+  if (!grade) {
+    console.error("Elemento #seller-grid não encontrado no HTML.");
+    return;
+  }
+
   const ordemAtual = vendedoresEmOrdemDoPeriodo();
-  $("#seller-grid").innerHTML = ordemAtual
+
+  grade.innerHTML = ordemAtual
     .map(
-      (v) => `
-    <article class="seller-card">
-      ${imageOrFallback(v.foto, v.nome)}
-      <span class="seller-name">${escapeHtml(v.nome)}</span>
-      <button class="whatsapp-btn" data-vendedor="${escapeHtml(v.id)}"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 18px; height: 18px; vertical-align: middle;"> Falar com</button>
-    </article>`,
+      (vendedor) => `
+        <article class="seller-card">
+          ${imageOrFallback(vendedor.foto, vendedor.nome)}
+
+          <span class="seller-name">
+            ${escapeHtml(vendedor.nome)}
+          </span>
+
+          <button
+            class="whatsapp-btn"
+            data-vendedor="${escapeHtml(vendedor.id)}"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+              alt="WhatsApp"
+              style="width:18px;height:18px;vertical-align:middle"
+            >
+            Falar com
+          </button>
+        </article>
+      `,
     )
     .join("");
-  document
-    .querySelectorAll(".whatsapp-btn")
-    .forEach((btn) =>
-      btn.addEventListener("click", () =>
-        iniciarAtendimento(btn.dataset.vendedor),
-      ),
-    );
+
+  document.querySelectorAll(".whatsapp-btn").forEach((botao) => {
+    botao.addEventListener("click", () => {
+      iniciarAtendimento(botao.dataset.vendedor);
+    });
+  });
 }
 
 function programarProximaTrocaDeOrdem() {
@@ -194,54 +298,93 @@ function programarProximaTrocaDeOrdem() {
     1,
     Number(CONFIG.intervaloOrdenacaoVendedoresDias) || 5,
   );
+
   const periodoMs = dias * 24 * 60 * 60 * 1000;
+
   const proximaVirada = (Math.floor(Date.now() / periodoMs) + 1) * periodoMs;
+
   const tempoAteVirada = Math.max(1000, proximaVirada - Date.now() + 1000);
+
   setTimeout(() => {
     renderSellers();
     programarProximaTrocaDeOrdem();
   }, tempoAteVirada);
 }
 
+/* ==========================================================
+   CARROSSEL DE FOTOS
+   ========================================================== */
+
 function renderCarousel() {
-  const track = $("#carousel-track"),
-    dots = $("#carousel-dots");
-  track.innerHTML = CONFIG.destaques
-    .slice(0, 10)
+  const track = $("#carousel-track");
+  const dots = $("#carousel-dots");
+
+  if (!track || !dots) {
+    console.warn("Elementos do carrossel não encontrados.");
+    return;
+  }
+
+  const destaques = CONFIG.destaques.slice(0, 10);
+
+  track.innerHTML = destaques
     .map(
       (src, i) => `
-    <div class="slide ${i === 0 ? "active" : ""}" data-slide="${i}">
-      <img src="${escapeHtml(src)}" alt="Foto de destaque ${i + 1}" onerror="this.remove();this.parentElement.innerHTML='<div class=&quot;slide-placeholder&quot;>Adicione a foto ${i + 1} em CONFIG.destaques</div>'">
-    </div>`,
+        <div class="slide ${i === 0 ? "active" : ""}" data-slide="${i}">
+          <img
+            src="${escapeHtml(src)}"
+            alt="Foto de destaque ${i + 1}"
+            onerror="this.remove();this.parentElement.innerHTML='<div class=&quot;slide-placeholder&quot;>Adicione a foto ${i + 1} em CONFIG.destaques</div>'"
+          >
+        </div>
+      `,
     )
     .join("");
-  dots.innerHTML = CONFIG.destaques
-    .slice(0, 10)
+
+  dots.innerHTML = destaques
     .map(
-      (_, i) =>
-        `<button class="${i === 0 ? "active" : ""}" aria-label="Ir para foto ${i + 1}" data-dot="${i}"></button>`,
+      (_, i) => `
+        <button
+          class="${i === 0 ? "active" : ""}"
+          aria-label="Ir para foto ${i + 1}"
+          data-dot="${i}"
+        ></button>
+      `,
     )
     .join("");
-  let current = 0;
-  const show = (n) => {
-    const slides = [...track.children],
-      buttons = [...dots.children];
-    slides.forEach((el, i) => el.classList.toggle("active", i === n));
-    buttons.forEach((el, i) => el.classList.toggle("active", i === n));
-    current = n;
+
+  let atual = 0;
+
+  const mostrarSlide = (numero) => {
+    const slides = [...track.children];
+    const botoes = [...dots.children];
+
+    slides.forEach((elemento, i) => {
+      elemento.classList.toggle("active", i === numero);
+    });
+
+    botoes.forEach((elemento, i) => {
+      elemento.classList.toggle("active", i === numero);
+    });
+
+    atual = numero;
   };
-  dots
-    .querySelectorAll("button")
-    .forEach((b) =>
-      b.addEventListener("click", () => show(Number(b.dataset.dot))),
-    );
-  if (CONFIG.destaques.length > 1)
-    setInterval(
-      () => show((current + 1) % Math.min(CONFIG.destaques.length, 10)),
-      CONFIG.intervaloCarrossel,
-    );
+
+  dots.querySelectorAll("button").forEach((botao) => {
+    botao.addEventListener("click", () => {
+      mostrarSlide(Number(botao.dataset.dot));
+    });
+  });
+
+  if (destaques.length > 1) {
+    setInterval(() => {
+      mostrarSlide((atual + 1) % destaques.length);
+    }, CONFIG.intervaloCarrossel);
+  }
 }
 
+/* ==========================================================
+   PONTUAÇÃO
+   ========================================================== */
 
 function calcularPontos(nota) {
   const tabela = {
@@ -249,139 +392,214 @@ function calcularPontos(nota) {
     2: 5,
     3: 6,
     4: 8,
-    5: 10
+    5: 10,
   };
 
   return tabela[nota] || 0;
 }
 
-function obterAvaliacoes() {
-  return JSON.parse(
-    localStorage.getItem("papelPautadoAvaliacoes") || "[]"
-  );
+/* ==========================================================
+   BUSCAR AVALIAÇÕES NO SUPABASE
+   ========================================================== */
+
+async function obterAvaliacoes() {
+  if (!supabaseClient) {
+    console.warn("Supabase não está conectado.");
+    return [];
+  }
+
+  const { data, error } = await supabaseClient
+    .from("avaliacoes")
+    .select("id, vendedor_id, vendedor, nota, pontos, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar avaliações:", error);
+    return [];
+  }
+
+  return data || [];
 }
 
-function calcularRanking() {
-  const avaliacoes = obterAvaliacoes();
+/* ==========================================================
+   CALCULAR RANKING COMPARTILHADO
+   ========================================================== */
 
-  return CONFIG.vendedores.map(vendedor => {
-    const avaliacoesVendedor = avaliacoes.filter(
-      avaliacao => avaliacao.vendedorId === vendedor.id
-    );
+async function calcularRanking() {
+  const avaliacoes = await obterAvaliacoes();
 
-    const pontos = avaliacoesVendedor.reduce(
-      (total, avaliacao) => total + calcularPontos(avaliacao.nota),
-      0
-    );
+  return CONFIG.vendedores
+    .map((vendedor) => {
+      const avaliacoesVendedor = avaliacoes.filter(
+        (avaliacao) => avaliacao.vendedor_id === vendedor.id,
+      );
 
-    return {
-      ...vendedor,
-      pontos,
-      quantidadeAvaliacoes: avaliacoesVendedor.length
-    };
-  }).sort((a, b) => b.pontos - a.pontos);
+      const pontos = avaliacoesVendedor.reduce(
+        (total, avaliacao) => total + Number(avaliacao.pontos),
+        0,
+      );
+
+      const quantidadeAvaliacoes = avaliacoesVendedor.length;
+
+      const somaNotas = avaliacoesVendedor.reduce(
+        (total, avaliacao) => total + Number(avaliacao.nota),
+        0,
+      );
+
+      const media = quantidadeAvaliacoes
+        ? (somaNotas / quantidadeAvaliacoes).toFixed(1)
+        : "0.0";
+
+      return {
+        ...vendedor,
+        pontos,
+        quantidadeAvaliacoes,
+        media,
+      };
+    })
+    .sort((a, b) => b.pontos - a.pontos);
 }
 
-function renderRanking() {
-  const ranking = calcularRanking();
+/* ==========================================================
+   MOSTRAR RANKING
+   ========================================================== */
 
-  $("#ranking-list").innerHTML = ranking
-    .map((vendedor, i) => `
-      <li class="rank-row">
-        <span class="rank-number">${i + 1}</span>
+async function renderRanking() {
+  const lista = $("#ranking-list");
 
-        <span class="rank-name">
-          ${escapeHtml(vendedor.nome)}
-        </span>
-
-        <img
-          class="rank-photo"
-          src="${escapeHtml(vendedor.foto)}"
-          alt=""
-          onerror="this.style.visibility='hidden'"
-        >
-
-        <strong class="rank-value">
-          ${vendedor.pontos} pontos
-        </strong>
-      </li>
-    `)
-    .join("");
-}
-
-
-function verificarZeragemAutomatica() {
-  const CHAVE = "papelPautadoUltimaZeragem";
-
-  const intervaloDias = CONFIG.intervaloZerarRankingDias || 30;
-  const intervaloMs = intervaloDias * 24 * 60 * 60 * 1000;
-
-  const agora = Date.now();
-
-  let ultimaZeragem = Number(localStorage.getItem(CHAVE));
-
-  // Primeira execução: inicia a contagem de 30 dias.
-  if (!ultimaZeragem) {
-    localStorage.setItem(CHAVE, String(agora));
+  if (!lista) {
+    console.error("Elemento #ranking-list não encontrado no HTML.");
     return;
   }
 
-  // Verifica se os 30 dias foram completados.
-  if (agora - ultimaZeragem >= intervaloMs) {
+  lista.innerHTML = "<li>Carregando ranking...</li>";
 
-    // Apaga todas as avaliações e pontos acumulados.
-    localStorage.removeItem("papelPautadoAvaliacoes");
+  try {
+    const ranking = await calcularRanking();
 
-    // Inicia um novo ciclo de 30 dias.
-    localStorage.setItem(CHAVE, String(agora));
+    lista.innerHTML = ranking
+      .map(
+        (vendedor, i) => `
+          <li class="rank-row">
+            <span class="rank-number">${i + 1}</span>
 
-    // Atualiza o ranking.
-    renderRanking();
+            <span class="rank-name">
+              ${escapeHtml(vendedor.nome)}
+            </span>
 
-    console.log("Ranking zerado automaticamente!");
+            <img
+              class="rank-photo"
+              src="${escapeHtml(vendedor.foto)}"
+              alt="Foto de ${escapeHtml(vendedor.nome)}"
+              onerror="this.style.visibility='hidden'"
+            >
+
+            <strong class="rank-value">
+              ${vendedor.pontos} pontos
+            </strong>
+          </li>
+        `,
+      )
+      .join("");
+  } catch (erro) {
+    console.error("Erro ao exibir ranking:", erro);
+
+    // Mesmo se houver falha no banco, mostra todas as vendedoras.
+    lista.innerHTML = CONFIG.vendedores
+      .map(
+        (vendedor, i) => `
+          <li class="rank-row">
+            <span class="rank-number">${i + 1}</span>
+            <span class="rank-name">${escapeHtml(vendedor.nome)}</span>
+            <img
+              class="rank-photo"
+              src="${escapeHtml(vendedor.foto)}"
+              alt=""
+              onerror="this.style.visibility='hidden'"
+            >
+            <strong class="rank-value">0 pontos</strong>
+          </li>
+        `,
+      )
+      .join("");
   }
 }
 
+/* ==========================================================
+   WHATSAPP DAS VENDEDORAS
+   ========================================================== */
 
 function iniciarAtendimento(id) {
   const vendedor = CONFIG.vendedores.find((v) => v.id === id);
+
   if (!vendedor) return;
+
   const mensagem = CONFIG.loja.mensagemWhatsApp.replaceAll(
     "{vendedor}",
     vendedor.nome,
   );
+
   const telefone = vendedor.telefone.replace(/\D/g, "");
+
   const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-  // Abre o WhatsApp em outra aba e mantém esta aba na avaliação do vendedor escolhido.
+
   window.open(url, "_blank", "noopener");
+
   window.location.href = `?avaliar=${encodeURIComponent(vendedor.id)}`;
 }
+
+/* ==========================================================
+   PÁGINA DE AVALIAÇÃO
+   ========================================================== */
 
 function mostrarAvaliacao() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("avaliar");
+
   if (!id) return false;
+
   const vendedor = CONFIG.vendedores.find((v) => v.id === id);
+
   if (!vendedor) return false;
-  $("#pagina-inicial").classList.add("hidden");
-  $("#pagina-avaliacao").classList.remove("hidden");
-  $("#titulo-avaliacao").textContent = "Avalie o atendimento de";
-  $("#nome-vendedor-avaliacao").textContent = vendedor.nome;
-  $("#foto-vendedor-avaliacao").src = vendedor.foto;
-  $("#foto-vendedor-avaliacao").alt = `Foto de ${vendedor.nome}`;
-  $("#foto-vendedor-avaliacao").onerror = () => {
-    $("#foto-vendedor-avaliacao").src = "";
-    $("#foto-vendedor-avaliacao").style.background = "#ddd";
-  };
+
+  if ($("#pagina-inicial")) {
+    $("#pagina-inicial").classList.add("hidden");
+  }
+
+  if ($("#pagina-avaliacao")) {
+    $("#pagina-avaliacao").classList.remove("hidden");
+  }
+
+  if ($("#titulo-avaliacao")) {
+    $("#titulo-avaliacao").textContent = "Avalie o atendimento de";
+  }
+
+  if ($("#nome-vendedor-avaliacao")) {
+    $("#nome-vendedor-avaliacao").textContent = vendedor.nome;
+  }
+
+  if ($("#foto-vendedor-avaliacao")) {
+    $("#foto-vendedor-avaliacao").src = vendedor.foto;
+    $("#foto-vendedor-avaliacao").alt = `Foto de ${vendedor.nome}`;
+
+    $("#foto-vendedor-avaliacao").onerror = () => {
+      $("#foto-vendedor-avaliacao").src = "";
+      $("#foto-vendedor-avaliacao").style.background = "#ddd";
+    };
+  }
+
   configurarNota(vendedor);
+
   return true;
 }
 
+/* ==========================================================
+   FORMULÁRIO E ENVIO DA AVALIAÇÃO
+   ========================================================== */
 
 function configurarNota(vendedor) {
   let nota = 0;
 
-  // Campos para identificar o cliente.
   const camposCliente = document.createElement("div");
 
   camposCliente.id = "dados-cliente-avaliacao";
@@ -412,9 +630,21 @@ function configurarNota(vendedor) {
     </p>
   `;
 
-  // Insere os campos antes da mensagem de feedback.
-  $("#rating-feedback").before(camposCliente);
+  const feedbackElemento = $("#rating-feedback");
 
+  if (!feedbackElemento) {
+    console.error("Elemento #rating-feedback não encontrado.");
+    return;
+  }
+
+  // Evita criar os campos duas vezes.
+  const camposAntigos = $("#dados-cliente-avaliacao");
+
+  if (camposAntigos) {
+    camposAntigos.remove();
+  }
+
+  feedbackElemento.before(camposCliente);
 
   const feedback = [
     "",
@@ -422,27 +652,33 @@ function configurarNota(vendedor) {
     "Obrigado. Vamos trabalhar para melhorar.",
     "Obrigado pela avaliação!",
     "Que bom! Ficamos felizes.",
-    "Uau! Muito obrigado pela avaliação!"
+    "Uau! Muito obrigado pela avaliação!",
   ];
 
-  document.querySelectorAll(".star-option").forEach(btn => {
-    btn.addEventListener("click", () => {
-      nota = Number(btn.dataset.score);
+  document.querySelectorAll(".star-option").forEach((botao) => {
+    botao.addEventListener("click", () => {
+      nota = Number(botao.dataset.score);
 
-      document.querySelectorAll(".star-option").forEach(b => {
-        b.classList.toggle(
-          "selected",
-          Number(b.dataset.score) <= nota
-        );
+      document.querySelectorAll(".star-option").forEach((b) => {
+        b.classList.toggle("selected", Number(b.dataset.score) <= nota);
       });
 
-      $("#rating-feedback").textContent = feedback[nota];
+      feedbackElemento.textContent = feedback[nota];
 
-      $("#enviar-avaliacao").disabled = false;
+      const enviar = $("#enviar-avaliacao");
+
+      if (enviar) enviar.disabled = false;
     });
   });
 
-  $("#enviar-avaliacao").addEventListener("click", () => {
+  const botaoEnviar = $("#enviar-avaliacao");
+
+  if (!botaoEnviar) {
+    console.error("Botão #enviar-avaliacao não encontrado.");
+    return;
+  }
+
+  botaoEnviar.addEventListener("click", async () => {
     if (!nota) {
       alert("Por favor, selecione as estrelas da avaliação.");
       return;
@@ -450,6 +686,7 @@ function configurarNota(vendedor) {
 
     const nomeCliente = $("#cliente-nome").value.trim();
     const telefoneCliente = $("#cliente-telefone").value.trim();
+
     const telefoneLimpo = telefoneCliente.replace(/\D/g, "");
 
     if (nomeCliente.length < 2) {
@@ -464,87 +701,153 @@ function configurarNota(vendedor) {
       return;
     }
 
-    const telefoneLoja =
-      CONFIG.loja.telefoneNotificacoes.replace(/\D/g, "");
+    const telefoneLoja = CONFIG.loja.telefoneNotificacoes.replace(/\D/g, "");
 
     if (!telefoneLoja || telefoneLoja.length < 12) {
       alert("O telefone de notificações da loja não está configurado.");
       return;
     }
 
-    const ratings = obterAvaliacoes();
+    if (!supabaseClient) {
+      alert(
+        "O sistema de avaliações ainda não está conectado ao banco de dados. Verifique a URL e a chave pública do Supabase.",
+      );
+      return;
+    }
+
     const pontos = calcularPontos(nota);
 
-    // Registra todos os dados da avaliação.
-    const avaliacao = {
-      cliente: nomeCliente,
-      telefoneCliente: telefoneLimpo,
-      vendedorId: vendedor.id,
-      vendedor: vendedor.nome,
-      nota: nota,
-      pontos: pontos,
-      data: new Date().toISOString()
-    };
+    botaoEnviar.disabled = true;
+    botaoEnviar.textContent = "Registrando avaliação...";
 
-    ratings.push(avaliacao);
+    try {
+      // Salva somente os dados necessários para o ranking.
+      // Nome e telefone do cliente não são publicados no banco.
+      const { error } = await supabaseClient.from("avaliacoes").insert([
+        {
+          vendedor_id: vendedor.id,
+          vendedor: vendedor.nome,
+          nota: nota,
+          pontos: pontos,
+        },
+      ]);
 
-    localStorage.setItem(
-      "papelPautadoAvaliacoes",
-      JSON.stringify(ratings)
-    );
+      if (error) {
+        console.error("ERRO COMPLETO DO SUPABASE:", error);
 
-    // Atualiza o ranking.
-    renderRanking();
+        alert(
+          "Erro ao salvar: " +
+            (error.message || "Erro desconhecido") +
+            "\nCódigo: " +
+            (error.code || "Não informado"),
+        );
 
-    // Monta a mensagem para a loja.
-    const estrelas = "⭐".repeat(nota);
+        botaoEnviar.disabled = false;
+        botaoEnviar.textContent = "Enviar avaliação";
+        return;
+      }
 
-    const mensagemLoja =
-      `🔔 NOVA AVALIAÇÃO - PAPEL PAUTADO\n\n` +
-      `👤 Cliente: ${nomeCliente}\n` +
-      `📱 Telefone: ${telefoneCliente}\n` +
-      `🛍️ Vendedora: ${vendedor.nome}\n` +
-      `⭐ Avaliação: ${estrelas} (${nota} estrelas)\n` +
-      `🏆 Pontos gerados: ${pontos} pontos\n` +
-      `📅 Data: ${new Date().toLocaleString("pt-BR")}`;
+      // Atualiza o ranking depois de salvar no banco.
+      await renderRanking();
 
-    // Abre o WhatsApp da loja com a mensagem preenchida.
-    const urlWhatsApp =
-      `https://wa.me/${telefoneLoja}?text=${encodeURIComponent(mensagemLoja)}`;
+      const estrelas = "⭐".repeat(nota);
 
-    window.open(urlWhatsApp, "_blank");
+      const mensagemLoja =
+        `🔔 NOVA AVALIAÇÃO - PAPEL PAUTADO\n\n` +
+        `👤 Cliente: ${nomeCliente}\n` +
+        `📱 Telefone: ${telefoneCliente}\n` +
+        `🛍️ Vendedora: ${vendedor.nome}\n` +
+        `⭐ Avaliação: ${estrelas} (${nota} estrelas)\n` +
+        `🏆 Pontos gerados: ${pontos} pontos\n` +
+        `📅 Data: ${new Date().toLocaleString("pt-BR")}`;
 
-    $("#rating-feedback").textContent =
-      `Obrigado, ${nomeCliente}! Sua avaliação foi registrada e ${pontos} pontos foram atribuídos a ${vendedor.nome}.`;
+      const urlWhatsApp = `https://wa.me/${telefoneLoja}?text=${encodeURIComponent(mensagemLoja)}`;
 
-    $("#enviar-avaliacao").disabled = true;
+      window.open(urlWhatsApp, "_blank");
+
+      feedbackElemento.textContent = `Obrigado, ${nomeCliente}! Sua avaliação foi registrada e ${pontos} pontos foram atribuídos a ${vendedor.nome}.`;
+
+      botaoEnviar.textContent = "Avaliação registrada";
+      botaoEnviar.disabled = true;
+    } catch (erro) {
+      console.error("Erro inesperado ao enviar avaliação:", erro);
+
+      alert("Ocorreu um erro ao registrar sua avaliação. Tente novamente.");
+
+      botaoEnviar.disabled = false;
+      botaoEnviar.textContent = "Enviar avaliação";
+    }
   });
-
 }
 
- 
+/* ==========================================================
+   ATUALIZAÇÃO AUTOMÁTICA DO RANKING
+   ========================================================== */
+
+function iniciarAtualizacaoRanking() {
+  if (!supabaseClient) return;
+
+  supabaseClient
+    .channel("atualizacao-ranking")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "avaliacoes",
+      },
+      async () => {
+        await renderRanking();
+      },
+    )
+    .subscribe((status) => {
+      console.log("Status da atualização do ranking:", status);
+    });
+}
+
+/* ==========================================================
+   CONTADOR DE VISITAS LOCAL
+   ========================================================== */
 
 function contarVisita() {
-  // Contador local do navegador. Contagem global exige um serviço/backend compartilhado.
-  const key = "papelPautadoVisitas";
-  const total = Number(localStorage.getItem(key) || 0) + 1;
-  localStorage.setItem(key, String(total));
-  $("#contador-visitas").textContent = total;
+  const chave = "papelPautadoVisitas";
+
+  const total = Number(localStorage.getItem(chave) || 0) + 1;
+
+  localStorage.setItem(chave, String(total));
+
+  if ($("#contador-visitas")) {
+    $("#contador-visitas").textContent = total;
+  }
 }
 
+/* ==========================================================
+   INICIALIZAÇÃO DO SITE
+   ========================================================== */
 
-renderTexts();
+function iniciarSite() {
+  renderTexts();
 
-if (!mostrarAvaliacao()) {
-  contarVisita();
-  renderSellers();
-  programarProximaTrocaDeOrdem();
-  renderCarousel();
+  if (!mostrarAvaliacao()) {
+    contarVisita();
 
-  // Verifica se chegou o momento de zerar o ranking.
-  verificarZeragemAutomatica();
+    // As vendedoras aparecem independentemente do Supabase.
+    renderSellers();
 
-  // Mostra o ranking atualizado.
-  renderRanking();
+    programarProximaTrocaDeOrdem();
+
+    renderCarousel();
+
+    // O ranking é carregado do banco compartilhado.
+    renderRanking();
+
+    // Atualiza o ranking quando outra pessoa avalia.
+    iniciarAtualizacaoRanking();
+  }
 }
 
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", iniciarSite);
+} else {
+  iniciarSite();
+}

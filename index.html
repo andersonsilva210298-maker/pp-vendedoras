@@ -1,88 +1,156 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#8738e8">
-  <title>Papel Pautado</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <main id="pagina-inicial" class="page">
-    <header class="topo container">
-      <a class="logo" href="#" aria-label="Papel Pautado - início"><img src="assets/logo pp.png" alt="Papel Pautado"></a>
-      <div class="visitas" aria-label="Visitas nesta página">
-        <strong id="contador-visitas">0</strong><span>Visitas</span>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <link rel="stylesheet" href="estilo.css">
+    <title>Papel Pautado</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="scr" id="intro">
+      <div id="ib">
+        <canvas id="cv" width="903" height="296"></canvas>
+        <img
+          id="lgsrc"
+          src="img/logo-intro.webp"
+          alt=""
+          style="display: none"
+        />
+        <img
+          id="pen"
+          src="img/caneta.png"
+          alt=""
+        />
       </div>
-    </header>
-
-    <section class="intro container">
-      <h1 id="titulo-loja">PAPEL PAUTADO</h1>
-      <p id="subtitulo-loja">O melhor atendimento, você só encontra aqui!</p>
-    </section>
-
-    <section class="hero container" aria-label="Destaque da loja">
-      <div class="hero-foto" id="hero-foto">
-        <div class="hero-copy">
-          <p id="texto-hero">É o lugar onde a criatividade ganha vida, os sonhos ganham cores e cada presente se transforma em uma demonstração de carinho. 🎁</p>
-          <a class="pill pill-clara" href="#vendedores">SEU VENDEDOR! <span>↗</span></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="destaques container">
-      <div class="section-heading">
-        <h2 id="titulo-destaques">Conheça nossos destaques</h2>
-        <p id="texto-destaques">Veja novidades, produtos e momentos especiais. Toque em um espaço para adicionar sua foto.</p>
-      </div>
-      <div class="carousel" aria-label="Carrossel de destaques">
-        <div class="carousel-track" id="carousel-track"></div>
-        <div class="carousel-dots" id="carousel-dots" aria-label="Navegação do carrossel"></div>
-      </div>
-    </section>
-
-    <section class="vendedores" id="vendedores">
-      <div class="container">
-        <div class="vendedores-intro">
-          <div><span class="eyebrow">NOSSO TIME</span><h2>Quem vai te atender?</h2></div>
-          <p id="texto-vendedores">Escolha seu atendimento preferido. Você será direcionado diretamente para o WhatsApp do vendedor.</p>
-        </div>
-        <div class="seller-grid" id="seller-grid"></div>
-      </div>
-    </section>
-
-    <section class="ranking">
-      <div class="container">
-        <h2 id="titulo-ranking">Destaques do time<br>Top 5 vendedores</h2>
-        <ol class="ranking-list" id="ranking-list"></ol>
-      </div>
-    </section>
-    <footer class="rodape"></footer>
-  </main>
-
-  <main id="pagina-avaliacao" class="rating-page hidden">
-    <div class="rating-content">
-      <a class="logo logo-rating" href="./" aria-label="Papel Pautado - voltar ao início"><img src="assets/logo pp.png" alt="Papel Pautado"></a>
-      <h1 id="titulo-avaliacao">Avalie o atendimento de</h1>
-      <img id="foto-vendedor-avaliacao" class="rating-avatar" src="" alt="Foto do vendedor">
-      <h2 id="nome-vendedor-avaliacao" class="rating-name">Vendedor</h2>
-      <section class="rating-card">
-        <h3 id="pergunta-avaliacao">Em uma escala de 1 a 5 estrelas, como você avaliaria o nosso serviço de atendimento?</h3>
-        <div class="stars" id="stars" role="radiogroup" aria-label="Avalie de uma a cinco estrelas">
-          <button class="star-option" data-score="1" aria-label="1 estrela: Péssimo"><span>★</span><small>Péssimo</small></button>
-          <button class="star-option" data-score="2" aria-label="2 estrelas: Ruim"><span>★</span><small>Ruim</small></button>
-          <button class="star-option" data-score="3" aria-label="3 estrelas: Regular"><span>★</span><small>Regular</small></button>
-          <button class="star-option" data-score="4" aria-label="4 estrelas: Bom"><span>★</span><small>Bom</small></button>
-          <button class="star-option" data-score="5" aria-label="5 estrelas: Excelente"><span>★</span><small>Excelente</small></button>
-        </div>
-        <p class="rating-feedback" id="rating-feedback" aria-live="polite">Selecione uma nota para registrar sua avaliação.</p>
-        <button class="submit-rating" id="enviar-avaliacao" disabled>Enviar avaliação</button>
-      </section>
-      <a class="voltar" href="./">← Voltar para a página inicial</a>
     </div>
-  </main>
+
+    <main id="app">
+      <div class="hd">
+        <img
+          src="img/topo.png"
+          alt="Papel Pautado"
+        />
+      </div>
+      <section class="sec dk" style="padding-top: 22px; padding-bottom: 30px">
+        <div class="tag">
+          É o lugar onde a criatividade ganha vida, os sonhos ganham cores e
+          cada presente se transforma em uma demonstração de carinho.🥰​🥰​
+          
+        </div>
+      </section>
+      <section class="sec br" style="padding-top: 34px; padding-bottom: 34px">
+        <div class="photo" id="fotoLoja">
+          <img src="img/background natal.jpg" alt=""
+          style="width: 100%; height: auto; border-radius: 12px;"
+          >
+        </div>
+      </section>
+      <section class="sec dk" style="padding-top: 38px; padding-bottom: 26px">
+        <div class="ln"></div>
+        <button
+          class="pill"
+          id="goTeam"
+          type="button"
+          aria-label="Ir para a seção de vendedores"
+        >
+          <svg class="l" viewBox="0 0 34 20">
+            <path d="M13 2 5 10l8 8M20 2l-8 8 8 8M27 2l-8 8 8 8" /></svg
+          >Seu vendedor<svg class="r" viewBox="0 0 34 20">
+            <path d="M13 2 5 10l8 8M20 2l-8 8 8 8M27 2l-8 8 8 8" />
+          </svg>
+        </button>
+        <div class="sub">
+          <p>Conheça nossos destaques</p>
+          <p class="g">
+            Escolha seu atendimento preferido. Você será direcionado diretamente
+            para o WhatsApp do vendedor.
+          </p>
+        </div>
+      </section>
+      <section class="sec br" style="padding-top: 36px; padding-bottom: 30px">
+        <div class="cw">
+          <div class="vt">
+            <span>D</span><span>E</span><span>S</span><span>T</span
+            ><span>A</span><span>Q</span><span>U</span><span>E</span
+            ><span>S</span>
+          </div>
+          <div class="cv"><div class="trk" id="trk"></div></div>
+        </div>
+        <div class="cd" id="cd"></div>
+      </section>
+      <section
+        class="sec md"
+        id="time"
+        style="padding-top: 60px; padding-bottom: 40px"
+      >
+        <div class="wm">vendedores</div>
+        <p class="kick">NOSSO TIME</p>
+        <h2 class="h2">Quem vai te atender?</h2>
+        <div class="grid" id="team"></div>
+      </section>
+      <section
+        class="sec dk rk"
+        style="padding-top: 50px; padding-bottom: 50px"
+      >
+        <h2>Destaques do time<br /><span>Top 3 vendedores</span></h2>
+        <div class="pod" id="pod"></div>
+        <div class="meta" id="meta">★ Meta Batida! ★</div>
+        <p class="note" id="note"></p>
+      </section>
+      <footer>
+        <img
+          src="img/rodape.webp"
+          alt="Papel Pautado"
+        />
+      </footer>
+    </main>
+
+    <section id="rate">
+      <div class="rw">
+        <img
+          class="lg"
+          src="img/logo-pp.png"
+          alt="Papel Pautado"
+        />
+        <h2>Avaliar atendimento de</h2>
+        <div class="av big" id="rav"></div>
+        <h2 id="rname" style="margin: 4px 0 0; font-size: 36px"></h2>
+        <div class="card">
+          <p>
+            Em uma escala de 1 a 5 estrelas, como você avaliaria o nosso serviço
+            de atendimento?
+          </p>
+          <div class="stars" id="stars"></div>
+        </div>
+        <label for="nm">Nome completo</label
+        ><input id="nm" autocomplete="name" />
+        <label for="ph">Número de celular</label
+        ><input id="ph" type="tel" inputmode="tel" autocomplete="tel" />
+        <button class="send" id="send" disabled>Enviar avaliação</button>
+        <p class="msg" id="msg"></p>
+        <button class="back" id="back">Voltar ao início</button>
+      </div>
+    </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://ezufhogcaracmyauznny.supabase.co";
+const SUPABASE_KEY = "sb_publishable_sVTnnICXfoRt9ES5xLmamQ_FpCPATCJ";
+
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+</script>
+
 <script src="script.js"></script>
-</body>
+  </body>
 </html>

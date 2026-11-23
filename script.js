@@ -185,7 +185,7 @@ $("#team").onclick = (e) => {
       s.phone +
       "?text=" +
       encodeURIComponent(
-        "Olá, " + s.name + "! Vim pelo site da Papel Pautado.",
+        "Olá, " + s.name + "tenho interesse em um dos seus produtos, poderia me ajudar?🥰🥰",
       ),
     "_blank",
     "noopener",

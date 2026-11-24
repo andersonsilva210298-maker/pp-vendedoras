@@ -39,9 +39,9 @@ const SELLERS = [
     photo: "img/Maisa.jpeg",
   },
   {
-    id: "vendedora6",
-    name: "Vendedora",
-    phone: "",
+    id: "melissa",
+    name: "Melissa",
+    phone: "558298359911",
     photo: "",
   },
 ];

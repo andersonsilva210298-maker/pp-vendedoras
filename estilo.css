@@ -822,3 +822,106 @@
         font: 14px "Open Sans";
         text-decoration: underline;
       }
+
+/* =====================================================================
+   CAMADA ELEGANTE — roxo profundo, lilás, blush e rosé-dourado
+   ===================================================================== */
+:root{--bg:#1c0533;--rose:#f4c7b8;--blush:#ffd6f0;--lilac:#e9d5ff;--serif:"Cormorant Garamond",Georgia,serif}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+body{background:radial-gradient(90% 45% at 12% 0%,rgba(165,0,255,.45),transparent 60%),radial-gradient(80% 40% at 100% 38%,rgba(255,150,220,.2),transparent 60%),linear-gradient(180deg,#2a0650,#1c0533 55%,#2b0750) fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#orb{position:fixed;left:0;top:0;width:360px;height:360px;margin:-180px 0 0 -180px;z-index:2;pointer-events:none;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,200,240,.2),transparent 68%);mix-blend-mode:screen;opacity:0;transition:opacity .4s}
+#prog{position:fixed;left:0;top:0;height:2px;width:100%;z-index:60;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--rose),var(--blush),#c084fc)}
+#app{position:relative;z-index:1;max-width:720px;box-shadow:none;background:transparent}
+.sec{margin-top:0;clip-path:none!important}
+.sec::before{display:none}
+.dk,.md{background:transparent}
+.br{background:linear-gradient(180deg,transparent,rgba(233,213,255,.09) 50%,transparent)}
+.hd img{filter:drop-shadow(0 6px 30px rgba(255,150,230,.35))}
+.hd::after{height:2px;bottom:0;background:linear-gradient(90deg,transparent,var(--rose),var(--blush),var(--rose),transparent);box-shadow:0 0 16px rgba(255,214,240,.6)}
+.tag{padding:22px 24px;border-radius:28px;text-align:center;font:italic 600 20px/1.4 var(--serif);color:#fff;
+  background:linear-gradient(160deg,rgba(255,255,255,.13),rgba(255,255,255,.03));border:1px solid rgba(244,199,184,.45);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.photo{height:auto;padding:2px;border:0;border-radius:30px;overflow:hidden;position:relative;
+  background:conic-gradient(from var(--a),var(--rose),#a500ff,var(--blush),#7c3aed,var(--rose));animation:giro 8s linear infinite;
+  box-shadow:0 0 44px rgba(190,90,255,.4),0 24px 50px rgba(0,0,0,.4)}
+.photo img{display:block;border-radius:28px!important}
+@keyframes giro{to{--a:360deg}}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}}
+#app.on .tag{animation:rise 1s .15s backwards}
+#app.on .photo{animation:rise 1s .35s backwards,giro 8s linear infinite}
+/* fita em movimento */
+.fita{overflow:hidden;border-block:1px solid rgba(244,199,184,.35);padding:10px 0;margin:6px 0}
+.fita-i{display:flex;width:max-content;animation:fita 32s linear infinite}
+.fita span{font:italic 600 24px var(--serif);color:var(--blush);padding:0 18px;white-space:nowrap}
+.fita span::after{content:"✦";margin-left:36px;font-size:14px;color:var(--rose)}
+@keyframes fita{to{transform:translateX(-50%)}}
+.pill{font:italic 600 27px var(--serif);border-color:var(--rose);padding:8px 24px;
+  background:linear-gradient(135deg,rgba(255,214,240,.3),rgba(168,85,247,.5) 60%,rgba(217,70,239,.5))}
+.ln{background:linear-gradient(90deg,transparent,var(--rose),transparent)}
+.sub>p:first-child{font:italic 600 24px var(--serif)}
+.sub .g{border-color:rgba(244,199,184,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.vt{font:600 17px var(--serif);color:var(--blush)}
+.trk{gap:14px;transition:transform .9s cubic-bezier(.65,0,.35,1)}
+.sl{flex:0 0 66%;aspect-ratio:1.25;border-radius:26px;opacity:.4;transform:scale(.84) rotateY(8deg);filter:saturate(.7);
+  border:1px solid rgba(255,255,255,.2);color:#d8b4fe;transition:transform .9s,opacity .9s,filter .9s,box-shadow .9s}
+.sl.a{opacity:1;transform:scale(1);filter:none;border-color:var(--rose);box-shadow:0 0 0 1px rgba(255,214,240,.5),0 0 34px rgba(210,110,255,.5),0 20px 40px rgba(0,0,0,.45)}
+.cd i{background:var(--blush)}
+.cd i.a{background:var(--rose);box-shadow:0 0 12px var(--blush)}
+.wm{font:italic 600 64px var(--serif);-webkit-text-stroke:1px rgba(255,214,240,.16);top:96px}
+.kick{font:italic 600 19px var(--serif);color:var(--rose);letter-spacing:.5px}
+.h2{font:600 36px/1.1 var(--serif);margin-bottom:22px}
+.grid{gap:14px;perspective:900px}
+.sc{position:relative;overflow:hidden;padding:20px 8px 14px;border-radius:28px;--mx:50%;--my:0%;transition:transform .25s ease-out,border-color .3s,box-shadow .3s;
+  background:radial-gradient(circle at var(--mx) var(--my),rgba(255,190,240,.3),transparent 62%),linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));
+  border:1px solid rgba(244,199,184,.38);box-shadow:0 14px 34px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3)}
+.sc:hover{border-color:var(--blush);box-shadow:0 0 32px rgba(255,170,230,.35),0 14px 34px rgba(0,0,0,.35)}
+.sc h3{font:italic 600 23px var(--serif);color:#fff;margin:12px 0 10px}
+.sc .av{width:78px;height:98px;border-radius:999px 999px 22px 22px;border:2px solid var(--rose);font-size:32px;
+  box-shadow:0 10px 24px rgba(0,0,0,.35),0 0 0 6px rgba(255,214,240,.12)}
+.vez{position:absolute;top:10px;left:50%;transform:translateX(-50%);padding:2px 12px;border-radius:20px;font:700 10px "Open Sans";white-space:nowrap;
+  color:#4a1a35;background:linear-gradient(135deg,#ffe9de,var(--rose));box-shadow:0 0 14px rgba(244,199,184,.7)}
+.sc:has(.vez) .av{margin-top:14px}
+.wa{padding:9px 4px;border-radius:30px;background:linear-gradient(135deg,#f0a5e4,#9d4edd);box-shadow:0 8px 20px rgba(157,78,221,.5),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .2s,box-shadow .2s}
+.wa:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(240,165,228,.7)}
+.wa svg{fill:#16a34a}
+.rk h2{font:600 40px/1 var(--serif)}
+.rk h2 span{font:italic 600 26px var(--serif);color:var(--blush)}
+footer{background:rgba(28,5,51,.75);border-top:1px solid rgba(244,199,184,.5)}
+@media (hover:hover){#orb{opacity:1}}
+@media (min-width:640px){.sl{flex-basis:56%}.grid{gap:18px}}
+@media (prefers-reduced-motion:reduce){.photo,.fita-i,#app.on .tag,#app.on .photo{animation:none}#orb{display:none}}
+
+/* =====================================================================
+   FUNDO SÓLIDO ANIMADO + CAIXA DE PRESENTE
+   ===================================================================== */
+html,body{background:#1c0533}
+#app{background:linear-gradient(135deg,#2a0650,#4b0a8f 25%,#33085f 50%,#5c12a8 75%,#2a0650);background-size:300% 300%;animation:fluxo 22s ease-in-out infinite alternate}
+@keyframes fluxo{to{background-position:100% 100%}}
+#app>#fx{z-index:0}
+footer{position:relative}
+#veu{position:fixed;inset:0;z-index:44;opacity:0;pointer-events:none;transition:opacity .4s;
+  background:radial-gradient(circle at 50% 50%,rgba(70,12,125,.7),rgba(14,0,30,.92))}
+html.abrindo #veu{opacity:1;pointer-events:auto}
+html.abrindo{overflow:hidden}
+#gift{position:fixed;left:0;top:0;width:64px;height:64px;z-index:45;pointer-events:none;opacity:0;transition:opacity .5s;will-change:transform}
+#app.on ~ #gift{opacity:1}
+#gift.oculto{opacity:0!important}
+#gift.centro{transition:transform .55s cubic-bezier(.34,1.4,.5,1),opacity .5s}
+.g-in{width:100%;height:100%;animation:flutua 3.2s ease-in-out infinite}
+@keyframes flutua{50%{transform:translateY(-5px) rotate(-3deg)}}
+#gift svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
+#gift svg *{transform-box:fill-box}
+.lp-e{transform-origin:100% 60%}.lp-d{transform-origin:0 60%}.g-no{transform-origin:center}
+.lp-e,.lp-d,.g-no{transition:transform .35s ease,opacity .35s}
+#gift.laco .lp-e{transform:rotate(-70deg) translate(-8px,-6px);opacity:0}
+#gift.laco .lp-d{transform:rotate(70deg) translate(8px,-6px);opacity:0}
+#gift.laco .g-no{transform:scale(0);opacity:0}
+.g-tampa{transform-origin:0 100%;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+#gift.tampa .g-tampa{transform:translate(-6px,-26px) rotate(-22deg)}
+.g-luz{opacity:0;transform-origin:center;transition:opacity .4s}
+#gift.tampa .g-luz{opacity:1;animation:pulsa .9s ease-out}
+@keyframes pulsa{from{transform:scale(.4)}60%{transform:scale(1.5)}to{transform:scale(1.2)}}
+.conf{position:fixed;z-index:46;pointer-events:none}
+@media (prefers-reduced-motion:reduce){#app,.g-in{animation:none}}

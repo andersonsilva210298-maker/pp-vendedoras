@@ -92,18 +92,6 @@ const av = (s, c = "") =>
   `<div class="av ${c}" style="${s.photo ? `background-image:url('${esc(s.photo)}')` : ""}">${s.photo ? "" : esc(s.name[0])}</div>`;
 const WA =
   '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg>';
-// bordas rasgadas de papel
-document.querySelectorAll(".sec").forEach((e) => {
-  const n = 34,
-    t = [],
-    b = [];
-  for (let i = 0; i <= n; i++) {
-    const x = (i / n) * 100;
-    t.push(`${x}% ${(Math.random() * 9).toFixed(1)}px`);
-    b.unshift(`${x}% calc(100% - ${(Math.random() * 9).toFixed(1)}px)`);
-  }
-  e.style.clipPath = `polygon(${t.concat(b).join(",")})`;
-});
 // foto temática da loja (retângulo branco logo abaixo do texto de abertura)
 (() => {
   const box = $("#fotoLoja");
@@ -142,7 +130,8 @@ const sl = [...trk.children],
   dt = [...cd.children];
 function go(n) {
   cur = (n + sl.length) % sl.length;
-  trk.style.transform = `translateX(${-sl[cur].offsetLeft}px)`;
+  const vp = trk.parentElement;
+  trk.style.transform = `translateX(${vp.offsetLeft + vp.clientWidth / 2 - sl[cur].offsetLeft - sl[cur].offsetWidth / 2}px)`;
   sl.forEach((e, i) => e.classList.toggle("a", i == cur));
   dt.forEach((e, i) => e.classList.toggle("a", i == cur));
 }
@@ -172,26 +161,29 @@ addEventListener("resize", () => go(cur));
 // time
 $("#team").innerHTML = timeRodizio()
   .map(
-    (s) =>
-      `<div class="sc">${av(s)}<h3>${esc(s.name)}</h3><button class="wa" data-id="${s.id}">${WA}Falar com</button></div>`,
+    (s, i) =>
+      `<div class="sc">${i === 0 ? '<span class="vez">Da vez</span>' : ""}${av(s)}<h3>${esc(s.name)}</h3><button class="wa" data-id="${s.id}">${WA}Falar com</button></div>`,
   )
   .join("");
 $("#team").onclick = (e) => {
   const b = e.target.closest(".wa");
   if (!b) return;
   const s = SELLERS.find((x) => x.id == b.dataset.id);
-  window.open(
+  const url =
     "https://wa.me/" +
-      s.phone +
-      "?text=" +
-      encodeURIComponent(
-        "Olá, " + s.name + " tenho interesse em um dos seus produtos, poderia me ajudar?🥰🥰",
-      ),
-    "_blank",
-    "noopener",
-  );
-  location.hash = "avaliar-" + s.id;
-  route();
+    s.phone +
+    "?text=" +
+    encodeURIComponent(
+      "Olá, " + s.name + " tenho interesse em um dos seus produtos, poderia me ajudar?🥰🥰",
+    );
+  // a caixa de presente abre e, em seguida, o WhatsApp é aberto
+  (window.abrirPresente || ((f) => f()))(() => {
+    location.hash = "avaliar-" + s.id;
+    route();
+    const w = window.open(url, "_blank");
+    if (w) w.opener = null;
+    else location.href = url;
+  });
 };
 // avaliação
 $("#goTeam").onclick = () => {
@@ -646,3 +638,130 @@ function start() {
   }
 }
 start();
+
+// ===== EFEITOS: luzes suaves, brilho do cursor, progresso e inclinação =====
+(() => {
+  const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const cv = $("#fx"), c = cv.getContext("2d"), orb = $("#orb"), prog = $("#prog");
+  const cores = ["255,190,240", "190,140,255", "244,199,184"];
+  let W, H, P = [];
+  const fit = () => {
+    const d = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * d; cv.height = H * d;
+    c.setTransform(d, 0, 0, d, 0, 0);
+    P = Array.from({ length: W < 700 ? 16 : 26 }, (_, i) => ({
+      x: Math.random() * W, y: Math.random() * H, r: 12 + Math.random() * 40,
+      v: .15 + Math.random() * .35, ph: Math.random() * 6.28, s: .2 + Math.random() * .6,
+      c: cores[i % 3], a: .1 + Math.random() * .14,
+    }));
+  };
+  const frame = (t = 0) => {
+    c.clearRect(0, 0, W, H);
+    P.forEach((p) => {
+      p.y -= p.v;
+      if (p.y < -p.r * 2) { p.y = H + p.r * 2; p.x = Math.random() * W; }
+      const x = p.x + Math.sin((t / 2000) * p.s + p.ph) * 30,
+        g = c.createRadialGradient(x, p.y, 0, x, p.y, p.r);
+      g.addColorStop(0, `rgba(${p.c},${p.a})`);
+      g.addColorStop(.6, `rgba(${p.c},${p.a * .5})`);
+      g.addColorStop(1, `rgba(${p.c},0)`);
+      c.fillStyle = g; c.beginPath(); c.arc(x, p.y, p.r, 0, 6.283); c.fill();
+    });
+    if (!reduz && !document.hidden) requestAnimationFrame(frame);
+  };
+  fit(); frame();
+  addEventListener("resize", () => { fit(); if (reduz) frame(); });
+  document.addEventListener("visibilitychange", () => !document.hidden && !reduz && frame());
+  addEventListener("pointermove", (e) => {
+    if (e.pointerType === "mouse") orb.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+  }, { passive: true });
+  const sc = () => {
+    const t = document.documentElement.scrollHeight - innerHeight;
+    prog.style.transform = `scaleX(${t > 0 ? Math.min(1, scrollY / t) : 0})`;
+  };
+  addEventListener("scroll", sc, { passive: true }); sc();
+  if (!reduz)
+    document.querySelectorAll(".sc,.photo").forEach((el) => {
+      el.addEventListener("pointermove", (e) => {
+        if (e.pointerType !== "mouse") return;
+        const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        el.style.setProperty("--mx", x * 100 + "%");
+        el.style.setProperty("--my", y * 100 + "%");
+        el.style.transform = `perspective(700px) rotateX(${(.5 - y) * 8}deg) rotateY(${(x - .5) * 10}deg)`;
+      });
+      el.addEventListener("pointerleave", () => (el.style.transform = ""));
+    });
+})();
+
+// ===== PRESENTE: fica ao lado do logo, acompanha a rolagem e abre ao escolher a vendedora =====
+const PRESENTE_TAM = 64; // tamanho da caixa (px)
+(() => {
+  const g = $("#gift"), html = document.documentElement, T = PRESENTE_TAM,
+    reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let abrindo = false, y = null, rodando = false;
+  const alvo = () => {
+    const hd = document.querySelector(".hd img").getBoundingClientRect(),
+      k = document.querySelector("#time .kick").getBoundingClientRect(),
+      h2 = document.querySelector("#time .h2").getBoundingClientRect(),
+      a = $("#app").getBoundingClientRect(),
+      y0 = hd.top + scrollY + (hd.height - T) / 2,
+      y1 = (k.top + h2.bottom) / 2 + scrollY - T / 2;
+    return { x: a.right - T - 14, y0, y1, t: Math.min(Math.max(y1, y0), Math.max(y0, scrollY + 90)) };
+  };
+  const draw = (v) => {
+    if (abrindo) {
+      const K = 3.2;
+      g.style.transform = `translate3d(${innerWidth / 2 - T / 2}px,${innerHeight / 2 - T / 2}px,0) scale(${K})`;
+      return;
+    }
+    g.style.transform = `translate3d(${v.x}px,${y - scrollY}px,0) rotate(${Math.max(-14, Math.min(14, (v.t - y) * .15))}deg)`;
+  };
+  const loop = () => {
+    const v = alvo();
+    if (y === null) y = v.y0;
+    y += (v.t - y) * .14;
+    draw(v);
+    if (Math.abs(v.t - y) > .4 || abrindo) requestAnimationFrame(loop);
+    else { y = v.t; draw(v); rodando = false; }
+  };
+  const go = () => { if (!rodando) { rodando = true; requestAnimationFrame(loop); } };
+  addEventListener("scroll", go, { passive: true });
+  addEventListener("resize", go);
+  addEventListener("load", go);
+  const hide = () => g.classList.toggle("oculto", /^#avaliar-/.test(location.hash));
+  addEventListener("hashchange", hide); hide(); go();
+  const confete = () => {
+    const cx = innerWidth / 2, cy = innerHeight / 2 - 30,
+      cores = ["#ffd6f0", "#f4c7b8", "#e9d5ff", "#ffffff", "#c084fc", "#f0abfc"];
+    for (let i = 0; i < 36; i++) {
+      const e = document.createElement("i"), r = Math.random(), ang = -Math.PI / 2 + (Math.random() - .5) * 2.6,
+        d = 110 + Math.random() * 210, dx = Math.cos(ang) * d, dy = Math.sin(ang) * d;
+      e.className = "conf";
+      e.style.cssText = `left:${cx}px;top:${cy}px;width:${5 + r * 6}px;height:${r > .5 ? 5 + r * 6 : 3}px;background:${cores[i % 6]};border-radius:${r > .5 ? "50%" : "2px"}`;
+      document.body.appendChild(e);
+      e.animate([
+        { transform: "translate(0,0) rotate(0)", opacity: 1 },
+        { transform: `translate(${dx}px,${dy}px) rotate(${r * 540}deg)`, opacity: 1, offset: .55 },
+        { transform: `translate(${dx * 1.15}px,${dy + 170}px) rotate(${r * 900}deg)`, opacity: 0 },
+      ], { duration: 1300 + Math.random() * 600, easing: "cubic-bezier(.2,.8,.3,1)" }).onfinish = () => e.remove();
+    }
+  };
+  const reset = () => {
+    abrindo = false;
+    html.classList.remove("abrindo");
+    g.classList.remove("centro", "laco", "tampa");
+    go();
+  };
+  window.abrirPresente = (cb) => {
+    if (abrindo) return;
+    if (reduz) return cb();
+    abrindo = true;
+    html.classList.add("abrindo");
+    g.classList.add("centro");
+    go();
+    setTimeout(() => g.classList.add("laco"), 450);
+    setTimeout(() => { g.classList.add("tampa"); confete(); }, 760);
+    setTimeout(() => { cb(); setTimeout(reset, 700); }, 1400);
+  };
+})();

@@ -6,14 +6,17 @@
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
+    <meta name="theme-color" content="#0a0118" />
     <link rel="stylesheet" href="estilo.css">
     <title>Papel Pautado</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Open+Sans:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
+    <div id="orb" aria-hidden="true"></div>
+    <div id="prog" aria-hidden="true"></div>
     <div class="scr" id="intro">
       <div id="ib">
         <canvas id="cv" width="903" height="296"></canvas>
@@ -32,6 +35,7 @@
     </div>
 
     <main id="app">
+      <canvas id="fx" aria-hidden="true"></canvas>
       <div class="hd">
         <img
           src="img/topo.png"
@@ -52,6 +56,7 @@
           >
         </div>
       </section>
+      <div class="fita" aria-hidden="true"><div class="fita-i"><span>criatividade</span><span>sonhos</span><span>cores</span><span>carinho</span><span>presentes com amor</span><span>criatividade</span><span>sonhos</span><span>cores</span><span>carinho</span><span>presentes com amor</span></div></div>
       <section class="sec dk" style="padding-top: 38px; padding-bottom: 26px">
         <div class="ln"></div>
         <button
@@ -91,7 +96,7 @@
         style="padding-top: 60px; padding-bottom: 40px"
       >
         <div class="wm">vendedores</div>
-        <p class="kick">NOSSO TIME</p>
+        <p class="kick">Nosso time</p>
         <h2 class="h2">Quem vai te atender?</h2>
         <div class="grid" id="team"></div>
       </section>
@@ -111,6 +116,28 @@
         />
       </footer>
     </main>
+
+    <div id="veu" aria-hidden="true"></div>
+    <div id="gift" aria-hidden="true"><div class="g-in">
+      <svg viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="gb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c084fc"/><stop offset="1" stop-color="#6d28d9"/></linearGradient>
+          <linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9de"/><stop offset="1" stop-color="#f4a9c8"/></linearGradient>
+          <radialGradient id="gl"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#ffd6f0" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse class="g-luz" cx="50" cy="46" rx="38" ry="32" fill="url(#gl)"/>
+        <ellipse cx="50" cy="95" rx="30" ry="4" fill="#000" opacity=".25"/>
+        <rect x="18" y="52" width="64" height="40" rx="6" fill="url(#gb)"/>
+        <rect x="44" y="52" width="12" height="40" fill="url(#gr)"/>
+        <g class="g-tampa">
+          <rect x="13" y="38" width="74" height="18" rx="6" fill="#d8b4fe"/>
+          <rect x="44" y="38" width="12" height="18" fill="url(#gr)"/>
+          <path class="lp-e" d="M50 38C40 20 22 22 26 33c3 8 16 7 24 5z" fill="url(#gr)"/>
+          <path class="lp-d" d="M50 38C60 20 78 22 74 33c-3 8-16 7-24 5z" fill="url(#gr)"/>
+          <circle class="g-no" cx="50" cy="38" r="6" fill="#f4a9c8"/>
+        </g>
+      </svg>
+    </div></div>
 
     <section id="rate">
       <div class="rw">
